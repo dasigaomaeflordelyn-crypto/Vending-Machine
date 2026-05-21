@@ -1,5 +1,20 @@
-Soda 35.00 10
-Chips 40.00 8
-Biscuit 20.00 15
-Water 15.00 20
-Candy 5.00 50
+Drinks Coke 30.00 1
+Drinks Sprite 30.00 6
+Drinks Royal 30.00 10
+Drinks Pepsi 28.00 10
+Drinks MountainDew 32.00 8
+Snacks PotatoChips 25.00 14
+Snacks CornChips 20.00 15
+Snacks CheeseCurls 18.00 20
+Snacks Chicharron 22.00 8
+Snacks Popcorn 35.00 8
+Pastries Cookie 15.00 23
+Pastries Brownie 25.00 15
+Pastries Cupcake 20.00 10
+Pastries Crackers 12.00 30
+Pastries WaferBar 10.00 40
+Healthy Water 15.00 50
+Healthy IcedTea 20.00 25
+Healthy Juice 25.00 20
+Healthy Milk 30.00 15
+Healthy EnergyDrink 45.00 10
