@@ -1,0 +1,5 @@
+Soda 35.00 10
+Chips 40.00 8
+Biscuit 20.00 15
+Water 15.00 20
+Candy 5.00 50
