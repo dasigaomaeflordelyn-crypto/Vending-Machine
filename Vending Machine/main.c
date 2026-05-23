@@ -16,56 +16,24 @@ Product machine[MAX_PRODUCTS];
 int total_products = 0;
 float student_cash = 500.00;
 
+char active_store_name[MAX_NAME] = "";
+char active_store_category[MAX_NAME] = "";
+
 // Function Declarations
 void load_stock();
 void save_stock();
 void load_inventory();
 void add_to_inventory(char *category, char *item_name, int qty, float price);
-int select_category_menu();
-void view_products(int is_buying_mode); 
+void choose_store_menu();
+void show_store_dashboard();
+void shop_store_products(); // Matches perfectly now!
 void execute_purchase(int index, int qty); 
 void view_inventory();
 
 int main() {
-    int choice;
     load_stock();
     load_inventory();
-
-    do {
-        printf("\n===================================\n");
-        printf("    CAMPUS MULTI-CATEGORY VENDING\n");
-        printf("===================================\n");
-        printf("[1] View Available Products\n");
-        printf("[2] Buy a Product\n"); 
-        printf("[3] View Personal Inventory & Cash\n");
-        printf("[4] Exit\n");
-        printf("===================================\n");
-        printf("Enter choice: ");
-        
-        if (scanf("%d", &choice) != 1) {
-            printf("Invalid input.\n");
-            while (getchar() != '\n'); 
-            continue;
-        }
-
-        switch (choice) {
-            case 1: 
-                view_products(0); // Mode 0: Viewing only
-                break; 
-            case 2: 
-                view_products(1); // Mode 1: Forces purchasing interaction path
-                break; 
-            case 3: 
-                view_inventory(); 
-                break; 
-            case 4: 
-                printf("Exiting system. Goodbye!\n"); 
-                break;
-            default: 
-                printf("Invalid choice!\n");
-        }
-    } while (choice != 4);
-
+    choose_store_menu();
     return 0;
 }
 
@@ -148,22 +116,89 @@ void add_to_inventory(char *category, char *item_name, int qty, float price) {
     fclose(file);
 }
 
-int select_category_menu() {
-    int cat_choice;
-    printf("\n--- SELECT A CATEGORY ---\n");
-    printf("[1] Soft Drinks\n");
-    printf("[2] Snacks & Chips\n");
-    printf("[3] Pastries & Biscuits\n");
-    printf("[4] Healthy Options\n");
-    printf("[5] Go Back to Main Menu\n");
-    printf("-------------------------\n");
-    printf("Enter category number: ");
-    
-    if (scanf("%d", &cat_choice) != 1) {
-        while (getchar() != '\n');
-        return -1;
-    }
-    return cat_choice;
+void choose_store_menu() {
+    int choice;
+    do {
+        printf("\n===================================\n");
+        printf("    SELECT A CAMPUS STOREFRONT\n");
+        printf("===================================\n");
+        printf("[1] Mae's Store         (Soft Drinks)\n");
+        printf("[2] Camille's Store     (Snacks & Chips)\n");
+        printf("[3] Alven's Store       (Pastries & Biscuits)\n");
+        printf("[4] Louie's Store       (Healthy Options)\n");
+        printf("[5] Shut Down System\n");
+        printf("===================================\n");
+        printf("Enter choice: ");
+        
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input.\n");
+            while (getchar() != '\n'); 
+            continue;
+        }
+
+        switch (choice) {
+            case 1: 
+                strcpy(active_store_name, "Mae's Store");
+                strcpy(active_store_category, "Drinks");
+                show_store_dashboard();
+                break; 
+            case 2: 
+                strcpy(active_store_name, "Camille's Store");
+                strcpy(active_store_category, "Snacks");
+                show_store_dashboard();
+                break; 
+            case 3: 
+                strcpy(active_store_name, "Alven's Store");
+                strcpy(active_store_category, "Pastries");
+                show_store_dashboard();
+                break; 
+            case 4: 
+                strcpy(active_store_name, "Louie's Store");
+                strcpy(active_store_category, "Healthy");
+                show_store_dashboard();
+                break; 
+            case 5:
+                printf("\nShutting down vending hub. Goodbye!\n");
+                break;
+            default: 
+                printf("Invalid store choice!\n");
+        }
+    } while (choice != 5);
+}
+
+void show_store_dashboard() {
+    int choice;
+    do {
+        printf("\n===================================\n");
+        printf("    WELCOME TO: %s\n", active_store_name);
+        printf("    Category Hub: %s\n", active_store_category);
+        printf("===================================\n");
+        printf("[1] Browse & Shop Products\n"); 
+        printf("[2] View Personal Inventory & Cash\n"); 
+        printf("[3] Go Back to Store Selection Menu\n");
+        printf("===================================\n");
+        printf("Enter choice: ");
+
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input.\n");
+            while (getchar() != '\n'); 
+            continue;
+        }
+
+        switch (choice) {
+            case 1: 
+                shop_store_products(); // Fixed function name call
+                break; 
+            case 2: 
+                view_inventory(); 
+                break; 
+            case 3: 
+                printf("\nExiting %s...\n", active_store_name);
+                break;
+            default: 
+                printf("Invalid choice!\n");
+        }
+    } while (choice != 3);
 }
 
 void execute_purchase(int index, int qty) {
@@ -191,124 +226,67 @@ void execute_purchase(int index, int qty) {
     printf("New Balance: ₱%.2f\n", student_cash);
 }
 
-void view_products(int is_buying_mode) {
-    int keep_viewing = 1;
-    int force_buy_action = is_buying_mode; 
+void shop_store_products() { // Fixed function name definition
+    int shopping = 1;
 
-    while (keep_viewing) {
-        int cat_choice = select_category_menu();
-        char target_cat[MAX_NAME];
+    while (shopping) {
+        printf("\n-------------------------------------------------------\n");
+        printf(" AVAILABLE PRODUCTS IN %s (%s)\n", active_store_name, active_store_category);
+        printf("-------------------------------------------------------\n");
+        printf("%-4s %-18s %-10s %-5s\n", "No.", "Item Name", "Price", "Stock");
+        printf("-------------------------------------------------------\n");
+        
+        int display_num = 1; 
+        for (int i = 0; i < total_products; i++) {
+            if (strcmp(machine[i].category, active_store_category) == 0) {
+                printf("[%2d] %-18s ₱%-9.2f %-5d\n", 
+                       display_num, machine[i].name, machine[i].price, machine[i].stock);
+                display_num++;
+            }
+        }
+        printf("-------------------------------------------------------\n");
 
-        if (cat_choice == 5) {
-            return; 
+        int prod_num, qty;
+        printf("Enter the item 'No.' to buy (or 0 to go back to Store Menu): ");
+        if (scanf("%d", &prod_num) != 1) {
+            while (getchar() != '\n');
+            continue;
+        }
+        
+        if (prod_num == 0) {
+            shopping = 0;
+            continue;
+        }
+        
+        printf("Enter quantity to buy: ");
+        if (scanf("%d", &qty) != 1) {
+            while (getchar() != '\n');
+            continue;
         }
 
-        switch (cat_choice) {
-            case 1: strcpy(target_cat, "Drinks"); break;
-            case 2: strcpy(target_cat, "Snacks"); break;
-            case 3: strcpy(target_cat, "Pastries"); break;
-            case 4: strcpy(target_cat, "Healthy"); break;
-            default:
-                printf("Invalid category selection!\n");
-                continue; 
+        int target_index = -1;
+        int current_match = 1;
+        for (int i = 0; i < total_products; i++) {
+            if (strcmp(machine[i].category, active_store_category) == 0) {
+                if (current_match == prod_num) {
+                    target_index = i;
+                    break;
+                }
+                current_match++;
+            }
         }
 
-        int show_category_loop = 1;
-
-        while (show_category_loop) {
-            printf("\n-------------------------------------------------------\n");
-            printf(" AVAILABLE PRODUCTS IN FILTER: %s\n", target_cat);
-            printf("-------------------------------------------------------\n");
-            printf("%-4s %-18s %-10s %-5s\n", "No.", "Item Name", "Price", "Stock");
-            printf("-------------------------------------------------------\n");
-            
-            int display_num = 1; 
-            for (int i = 0; i < total_products; i++) {
-                if (strcmp(machine[i].category, target_cat) == 0) {
-                    printf("[%2d] %-18s ₱%-9.2f %-5d\n", 
-                           display_num, machine[i].name, machine[i].price, machine[i].stock);
-                    display_num++;
-                }
-            }
-            printf("-------------------------------------------------------\n");
-
-            int sub_choice;
-            if (force_buy_action) {
-                sub_choice = 1;
-            } else {
-                printf("\nWhat would you like to do next?\n");
-                printf("[1] Buy an item from this category\n");
-                printf("[2] View a different category\n");
-                printf("[3] Go back to Main Menu\n");
-                printf("Enter choice: ");
-                
-                if (scanf("%d", &sub_choice) != 1) {
-                    while (getchar() != '\n');
-                    sub_choice = 3; 
-                }
-            }
-
-            if (sub_choice == 1) {
-                int prod_num, qty;
-                printf("\nEnter the exact item 'No.' to buy (or 0 to cancel): ");
-                if (scanf("%d", &prod_num) != 1) {
-                    while (getchar() != '\n');
-                    force_buy_action = 0;
-                    continue;
-                }
-                
-                // Process cancel request smoothly
-                if (prod_num == 0) {
-                    printf("\nPurchase cancelled. Returning to category selection...\n");
-                    show_category_loop = 0;
-                    force_buy_action = 0;
-                    continue;
-                }
-                
-                printf("Enter quantity to buy: ");
-                if (scanf("%d", &qty) != 1) {
-                    while (getchar() != '\n');
-                    force_buy_action = 0;
-                    continue;
-                }
-
-                int target_index = -1;
-                int current_match = 1;
-                for (int i = 0; i < total_products; i++) {
-                    if (strcmp(machine[i].category, target_cat) == 0) {
-                        if (current_match == prod_num) {
-                            target_index = i;
-                            break;
-                        }
-                        current_match++;
-                    }
-                }
-
-                if (target_index == -1) {
-                    printf("Invalid selection for this category list!\n");
-                    force_buy_action = 0;
-                } else {
-                    execute_purchase(target_index, qty);
-                }
-                
-                printf("\nDo you want to buy another product from this same category? (1 = Yes / 0 = No): ");
-                int loop_again;
-                if (scanf("%d", &loop_again) == 1 && loop_again == 1) {
-                    force_buy_action = 1; 
-                } else {
-                    while (getchar() != '\n');
-                    show_category_loop = 0; 
-                    keep_viewing = 0; 
-                }
-            }
-            else if (sub_choice == 2) {
-                show_category_loop = 0; 
-                force_buy_action = 0;
-            }
-            else if (sub_choice == 3) {
-                show_category_loop = 0;
-                keep_viewing = 0; 
-            }
+        if (target_index == -1) {
+            printf("\nInvalid selection for this store list!\n");
+        } else {
+            execute_purchase(target_index, qty);
+        }
+        
+        printf("\nDo you want to continue shopping in this store? (1 = Yes / 0 = No): ");
+        int loop_again;
+        if (scanf("%d", &loop_again) != 1 || loop_again != 1) {
+            while (getchar() != '\n');
+            shopping = 0; 
         }
     }
 }
