@@ -1,4 +1,3 @@
-212.00
-Drinks Royal 4 30.00
-Snacks CheeseCurls 6 18.00
-Snacks CornChips 3 20.00
+500.00
+
+Drinks Sprite 3 30.00
