@@ -18,7 +18,6 @@ float student_cash = 500.00;
 char active_store_name[50] = "";
 char active_store_category[50] = "";
 
-// Function Declarations
 void load_stock();
 void save_stock();
 void load_cash();
@@ -104,15 +103,13 @@ void choose_store_menu() {
         printf("===================================\n");
         printf("Enter choice: ");
         
-        // Check 1: Catches non-integer inputs (like text characters)
         if (scanf("%d", &choice) != 1) {
             printf("\nInvalid input! Please enter a valid number.\n");
-            while (getchar() != '\n'); // Clean terminal input buffer
-            choice = 0; // Trigger default block loop reset
+            while (getchar() != '\n');
+            choice = 0; 
             continue;
         }
 
-        // Check 2: Catches out-of-range option inputs
         if (choice < 1 || choice > 5) {
             printf("\nInvalid input! Option out of range. Choose [1-5].\n");
             continue;
@@ -157,7 +154,6 @@ void show_store_dashboard() {
         printf("===================================\n");
         printf("Enter choice: ");
 
-        // Check 1: Catches non-integer input text values
         if (scanf("%d", &choice) != 1) {
             printf("\nInvalid input! Please enter a valid number.\n");
             while (getchar() != '\n'); 
@@ -165,7 +161,6 @@ void show_store_dashboard() {
             continue;
         }
 
-        // Check 2: Catches out-of-range selections
         if (choice < 1 || choice > 3) {
             printf("\nInvalid input! Option out of range. Choose [1-3].\n");
             continue;
@@ -212,7 +207,6 @@ void shop_store_products() {
     int choice_no, qty;
     printf("Enter Item 'No.' to buy (or 0 to go back): ");
     
-    // Check 1: Non-numeric values inside purchasing index number
     if (scanf("%d", &choice_no) != 1) {
         printf("\nInvalid input! Please enter an integer number.\n");
         while (getchar() != '\n');
@@ -221,7 +215,6 @@ void shop_store_products() {
     
     if (choice_no == 0) return;
     
-    // Check 2: Dynamic validation against active visible rows listed
     if (choice_no < 1 || choice_no >= display_num || item_indices[choice_no] == -1) {
         printf("\nInvalid input! Selected item number does not exist.\n");
         return;
@@ -229,7 +222,6 @@ void shop_store_products() {
 
     printf("Enter quantity to purchase: ");
     
-    // Check 3: Non-numeric selection or zero/negative units requested
     if (scanf("%d", &qty) != 1) {
         printf("\nInvalid input! Quantity must be a solid number.\n");
         while (getchar() != '\n');
