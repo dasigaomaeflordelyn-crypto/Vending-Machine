@@ -13,15 +13,16 @@ typedef struct {
 
 Product machine[MAX_PRODUCTS];
 int total_products = 0;
-float student_cash = 500.00;
+
+// The base wallet balance tracked cleanly in code memory
+float student_cash = 500.00; 
 
 char active_store_name[50] = "";
 char active_store_category[50] = "";
 
+// Function Declarations
 void load_stock();
 void save_stock();
-void load_cash();
-void save_cash();
 void log_purchase_receipt(char *name, int qty, float price);
 void choose_store_menu();
 void show_store_dashboard();
@@ -29,8 +30,7 @@ void shop_store_products();
 void view_inventory();
 
 int main() {
-    load_stock();
-    load_cash();
+    load_stock(); // Loads initial configuration structures
     choose_store_menu();
     return 0;
 }
@@ -63,27 +63,10 @@ void save_stock() {
     fclose(file);
 }
 
-void load_cash() {
-    FILE *file = fopen("cash.txt", "r");
-    if (file != NULL) {
-        fscanf(file, "%f", &student_cash);
-        fclose(file);
-    } else {
-        student_cash = 500.00; 
-    }
-}
-
-void save_cash() {
-    FILE *file = fopen("cash.txt", "w");
-    if (file != NULL) {
-        fprintf(file, "%.2f\n", student_cash);
-        fclose(file);
-    }
-}
-
 void log_purchase_receipt(char *name, int qty, float price) {
     FILE *file = fopen("inventory.txt", "a"); 
     if (file != NULL) {
+        // Appends 4 strictly mapped data fields to avoid rendering alignment offsets
         fprintf(file, "%s %s %d %.2f\n", active_store_category, name, qty, price);
         fclose(file);
     }
@@ -103,13 +86,15 @@ void choose_store_menu() {
         printf("===================================\n");
         printf("Enter choice: ");
         
+        // Input validation for menu selection character inputs
         if (scanf("%d", &choice) != 1) {
             printf("\nInvalid input! Please enter a valid number.\n");
-            while (getchar() != '\n');
+            while (getchar() != '\n'); // Purge bad characters from the scanner buffer
             choice = 0; 
             continue;
         }
 
+        // Out-of-bounds menu integer validation
         if (choice < 1 || choice > 5) {
             printf("\nInvalid input! Option out of range. Choose [1-5].\n");
             continue;
@@ -154,6 +139,7 @@ void show_store_dashboard() {
         printf("===================================\n");
         printf("Enter choice: ");
 
+        // Input validation for storefront dashboard selection
         if (scanf("%d", &choice) != 1) {
             printf("\nInvalid input! Please enter a valid number.\n");
             while (getchar() != '\n'); 
@@ -183,6 +169,7 @@ void shop_store_products() {
     int display_num = 1; 
     int item_indices[MAX_PRODUCTS]; 
     
+    // Safety init array bounds to avoid Segmentation Fault core dumps
     for(int k = 0; k < MAX_PRODUCTS; k++) {
         item_indices[k] = -1;
     }
@@ -207,6 +194,7 @@ void shop_store_products() {
     int choice_no, qty;
     printf("Enter Item 'No.' to buy (or 0 to go back): ");
     
+    // Validates if input item reference index is numeric
     if (scanf("%d", &choice_no) != 1) {
         printf("\nInvalid input! Please enter an integer number.\n");
         while (getchar() != '\n');
@@ -215,6 +203,7 @@ void shop_store_products() {
     
     if (choice_no == 0) return;
     
+    // Validates if the selected choice belongs to the displayed list items
     if (choice_no < 1 || choice_no >= display_num || item_indices[choice_no] == -1) {
         printf("\nInvalid input! Selected item number does not exist.\n");
         return;
@@ -222,6 +211,7 @@ void shop_store_products() {
 
     printf("Enter quantity to purchase: ");
     
+    // Validates numeric entry for purchase quantity
     if (scanf("%d", &qty) != 1) {
         printf("\nInvalid input! Quantity must be a solid number.\n");
         while (getchar() != '\n');
@@ -250,7 +240,6 @@ void shop_store_products() {
     student_cash -= cost;
 
     save_stock();
-    save_cash();
     log_purchase_receipt(machine[db_index].name, qty, machine[db_index].price);
 
     printf("\nSuccess! Disbursed %d unit(s) of %s.\n", qty, machine[db_index].name);
@@ -282,6 +271,7 @@ void view_inventory() {
     printf("\n%-15s %-18s %-12s %-10s\n", "Category", "Purchased Item", "Total Qty", "Unit Price");
     printf("------------------------------------------------------------\n");
 
+    // Seamless table parsing logic for four parameters per string database row
     while (fscanf(file, "%s %s %d %f", cat, name, &qty, &price) != EOF) {
         float item_line_total = price * qty;
         grand_total += item_line_total;
@@ -292,3 +282,5 @@ void view_inventory() {
     printf("------------------------------------------------------------\n");
     printf("TOTAL AMOUNT SPENT IN HUB: ₱%.2f\n", grand_total);
 }
+
+
